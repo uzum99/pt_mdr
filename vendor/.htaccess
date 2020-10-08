@@ -1,0 +1,7 @@
+SetEnvIf Referer localhost/mio internal
+#
+<Files *>
+order Deny,Allow
+Deny from all
+Allow from env=internal
+</Files>
