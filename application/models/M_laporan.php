@@ -218,7 +218,7 @@ class M_laporan extends CI_Model
         // $searchSuplier = $postData['searchSuplier'];
         // $searchNama = $postData['searchNama'];
         $bulan = $postData['bulan'];
-        $jk = $postData['jk'];
+        $jenis = $postData['jenis'];
 
 
         ## Total number of records without filtering
@@ -229,25 +229,25 @@ class M_laporan extends CI_Model
         ## Total number of record with filtering
         $this->db->select('count(*) as allcount');
         if ($bulan != '' || $jk != '')
-            $this->db->where('jk_pelamar', $jk);
-        $this->db->where('MONTH(TglDaftar_pelamar)', $bulan);
-        $records  = $this->db->get('tb_pelamar')->result();
+            $this->db->where('jenis', $jenis);
+        $this->db->where('MONTH(tanggal_masuk)', $bulan);
+        $records  = $this->db->get('barang_masuk')->result();
         $totalRecordwithFilter = $records[0]->allcount;
 
         ## Fetch records
         $this->db->select('*');
         if ($bulan != '' || $jk != '')
-            $this->db->where('jk_pelamar', $jk);
-        $this->db->where('MONTH(TglDaftar_pelamar)', $bulan);
-        $this->db->order_by('tb_pelamar.id_pelamar');
+            $this->db->where('jenis', $jenis);
+        $this->db->where('MONTH(tanggal_masuk)', $bulan);
+        $this->db->order_by('barang_masuk.id_barang_masuk');
         $this->db->limit($rowperpage, $start);
-        $records  = $this->db->get('tb_pelamar')->result();
+        $records  = $this->db->get('barang_masuk')->result();
 
 
         $this->db->select('*');
-        $this->db->order_by('tb_pelamar.id_pelamar');
+        $this->db->order_by('barang_masuk.id_barang_masuk');
         $this->db->limit($rowperpage, $start);
-        $records2  = $this->db->get('tb_pelamar')->result();
+        $records2  = $this->db->get('barang_masuk')->result();
 
         
 
@@ -281,20 +281,12 @@ class M_laporan extends CI_Model
 
 
                 $data[] = array(
-                    "id_pelamar" => $record->id_pelamar,
-                    "TglDaftar_pelamar" => $record->TglDaftar_pelamar,
-                    "nama_pelamar" => $record->nama_pelamar,
-                    "tgllahir_pelamar" => $record->tgllahir_pelamar,
-                    "umur_pelamar" => $record->umur_pelamar,
-                    "jk_pelamar" => $record->jk_pelamar,
-                    "alamat_pelamar" => $record->alamat_pelamar,
-                    "agama_pelamar" => $record->agama_pelamar,
-                    "nohp_pelamar" => $record->nohp_pelamar,
-                    "status_pelamar" => $record->status_pelamar,
-                    "pdkterakhir_pelamar" => $record->pdkterakhir_pelamar,
-                    "jurusan_pelamar" => $record->jurusan_pelamar,
-                    "asalsekolah_pelamar" => $record->asalsekolah_pelamar,
-                    "Foto_pelamar" => $record->Foto_pelamar
+                    "id_barang_masuk" => $record->id_barang_masuk,
+                    "id_barang" => $record->id_barang,
+                    "tanggal_masuk" => $record->tanggal_masuk,
+                    "jumlah_masuk" => $record->jumlah_masuk,
+                    "satuan" => $record->satuan,
+                    "jenis" => $record->jenis
                 );
             }
         // }

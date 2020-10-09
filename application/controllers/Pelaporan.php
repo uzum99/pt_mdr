@@ -30,7 +30,7 @@ class pelaporan extends CI_Controller
     {
 
         $param['pageInfo'] = "List Penjualan";
-        $this->template->load("laporan/v_penjualan", $param);
+        $this->template->load("laporan/v_penjualan2", $param);
     }
     public function laporanbukubesar()
     {
