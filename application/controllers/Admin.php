@@ -21,6 +21,7 @@ class admin extends CI_Controller
 		//init modal
 		$this->load->database();
 		$this->load->model('Mmain');
+		//$this->load->view('Dashboard');
 		
 		$this->fn->getheader();	
 		$this->fn->getfooter();

@@ -30,20 +30,19 @@ class Barangmasuk extends CI_Controller
 	
 	//query
 	var $ordQuery=" ORDER BY id_barang_masuk DESC ";
-	var $tableQuery= "barang_masuk "; //AS a INNER JOIN tb_barang AS b ON a.id_barang = b.id_barang
+	var $tableQuery= "barang_masuk AS a INNER JOIN tb_barang AS b ON a.id_barang_masuk = b.id_barang";
 	var $fieldQuery="
-						id_barang_masuk,
-						id_barang,
-						nama_barang,
-						tanggal_masuk,
-					    jumlah_masuk,
-						satuan,
-						jenis
+						a.id_barang_masuk,
+						concat(b.id_barang,b.nama_barang),
+						a.tanggal_masuk,
+					    a.jumlah_masuk,
+						a.satuan,
+						a.jenis
 						"; //leave blank to show all field
 						
 	var $primaryKey="id_barang_masuk";
 	//var $detKey="nik";
-	var $updateKey="id_barang_masuk";
+	var $updateKey="a.id_barang_masuk";
 	
 	//auto generate id
 	//sesuaikan panjangnya length di database
@@ -54,8 +53,7 @@ class Barangmasuk extends CI_Controller
 	//view
 	var $viewFormTitle="Daftar Barang ATK Masuk";
 	var $viewFormTableHeader=array(
-									"NO Transaksi",
-									"Id barang",
+									"No Transaksi",
 									"Nama Barang",
 									"Tanggal Masuk",
                                     "Jumlah",
@@ -67,8 +65,7 @@ class Barangmasuk extends CI_Controller
 	var $saveFormTitle="Tambah Barang ATK Masuk";
 	var $saveFormTableHeader=array(
 									"No Transaksi",							
-									"Id barang",
-									"Nama Barang",
+									"Nama barang",
 									"Tanggal Masuk",
 									"Jumlah",
 									"Satuan",
@@ -200,16 +197,18 @@ class Barangmasuk extends CI_Controller
 		}
 		
 		// $cboacc=$this->fn->createCbofromDb("tb_acc","id_acc as id,nm_acc as nm","",$txtVal[58],"","txtUser[]");
+		// Combobox gabungan
+		$cboID=$this->fn->createCbofromDb("tb_barang","id_barang as id, concat(id_barang ,'- ',nama_barang) as nm","",$txtVal[1],"","txt[]");
+		
 		// combobox statis
-		$cboSatuan=$this->fn->createCbo(array('Pcs','Box','Unit'),array('Pcs','Box','Unit'),$txtVal[5]);
-		$cboJenis=$this->fn->createCbo(array('Stok awal','Stok akhir'),array('Stok awal','Stok akhir'),$txtVal[6]);
+		$cboSatuan=$this->fn->createCbo(array('Pcs','Box','Unit'),array('Pcs','Box','Unit'),$txtVal[4]);
+		$cboJenis=$this->fn->createCbo(array('Stok awal','Stok akhir'),array('Stok awal','Stok akhir'),$txtVal[5]);
 			
 		$output['formTxt']=array(
 							"<input type='text' class='form-control' id='txtIdBarangMasuk' name=txt[] value='".$txtVal[0]."' required readonly placeholder='Max. 7 karakter' maxlength='70'>",
-							"<input type='text' class='form-control' autocomplete=off id='txtIdBarang' name=txt[] value='".$txtVal[1]."' required placeholder='Max. 7 karakter' maxlength='70'>",
-							"<input type='text' class='form-control' autocomplete=off id='txtNamaBarang' name=txt[] value='".$txtVal[2]."' required placeholder='Max. 30 karakter' maxlength='30'>",
-							"<input type='text' class='form-control dtp' data-date-format='yyyy-mm-dd' autocomplete=off  readonly id='txtTanggalMasuk' name=txt[] value='".$txtVal[3]."' required placeholder='Max. karakter' maxlength='70'>",
-							"<input type='text' class='form-control' autocomplete=off id='txtJumlahBarang' name=txt[] value='".$txtVal[4]."' required placeholder='' maxlength='70'>",
+							$cboID,
+							"<input type='text' class='form-control dtp' data-date-format='yyyy-mm-dd' autocomplete=off  readonly id='txtTanggalMasuk' name=txt[] value='".$txtVal[2]."' required placeholder='Max. karakter' maxlength='70'>",
+							"<input type='text' class='form-control' autocomplete=off id='txtJumlahBarang' name=txt[] value='".$txtVal[3]."' required placeholder='' maxlength='70'>",
 								$cboSatuan,
 								$cboJenis
 								);
@@ -230,10 +229,11 @@ class Barangmasuk extends CI_Controller
 		$this->load->database();
 		$this->load->model('Mmain');
 		
-		//echo implode("<br>",$savValTemp); //show data inputan.. tapi
+		//echo implode("<br>",$savValTemp); //show data inputan.. tapi polos
+
 		//update stok
 		$stoklama = $this->Mmain->qRead("tb_barang WHERE id_barang = '".$savValTemp[1]."' ","stok_barang","")->row()->stok_barang;
-		$stokbaru = $stoklama + $savValTemp[4];
+		$stokbaru = $stoklama + $savValTemp[3];
 
 		$this->Mmain->qIns($this->mainTable,$savValTemp);
 		$this->Mmain->qUpdPart("tb_barang","id_barang",$savValTemp[1],Array("stok_barang"),Array($stokbaru));
